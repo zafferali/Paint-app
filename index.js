@@ -12,6 +12,7 @@ window.addEventListener('load', () => {
     const rect = {};
     const coord = {};
     let drawing = false;
+    let arr = []
 
     function generateRandomColor() {
         fillColor = Math.floor(Math.random()*16777215).toString(16);
@@ -46,6 +47,7 @@ window.addEventListener('load', () => {
         rect.bottomRightPos = { endX, endY };
         rect.width = coord.width;
         rect.height = coord.height;
+        rect.color = '#' + fillColor;
         const { topLeftPos: { startX, startY } } = rect;
 
         if(startX != endX && startY != endY) {
@@ -65,7 +67,6 @@ window.addEventListener('load', () => {
     //    ctx.clearRect(0, 0, canvas.width, canvas.height);
         clearCanvas();
         redrawImage();
-        ctx.beginPath();
         ctx.fillRect(coord.startX, coord.startY, coord.width, coord.height);
      //   ctx.strokeRect(coord.startX, coord.startY, coord.width, coord.height);
     }
@@ -84,19 +85,40 @@ window.addEventListener('load', () => {
 
             //condition to check if the double click position falls between top left and bottom right
             if (
-                coord.startX > startX &&
-                coord.startY > startY &&
-                coord.startX < endX &&
-                coord.startY < endY
+                coord.startX < startX + width &&
+                coord.startY < startY + height &&
+                coord.startX > startX - width &&
+                coord.startY > startY - height
             ) {
                 //clear the rectangle by using start position, length and width
-                console.log('Clicked coords', width, height);
+                // console.log('Coord', width, height);
+
+                // arr.push(rectArr[i]);
+
+                // console.log('Array dynamic', arr);
+
+                // const clone = rectArr.slice();
+
+                // console.log('cloned', clone.indexOf(arr[arr.length - 1]))
+
+                console.log('beforeSplice', rectArr);
+
+                rectArr.splice(i, 1);
                 clearCanvas();
-                redrawImage();
-                ctx.clearRect(startX, startY, width, height);
+
+                console.log('afterSplice', rectArr);
+
+                rectArr.forEach((rect) => {
+                    ctx.fillStyle = rect.color;
+                    ctx.fillRect(rect.topLeftPos.startX, rect.topLeftPos.startY, rect.width, rect.height);
+                });
+                // clearCanvas();
+                // redrawImage();
+                // ctx.clearRect(startX, startY, width, height);
                 //   ctx.strokeRect(startX, startY, endX-startX, endY-startY);
             }
         }
+
     }
 
     canvas.addEventListener('mousedown', onMouseDown);
